@@ -1,0 +1,13 @@
+C:\Users\ferok\Documents\MCUXpressoIDE_25.6.136\workspace_FRDMMCXN947\Lab0_DSP_FRDMMCXN947\CMSIS/core_cm33.h:2358:22:__NVIC_EnableIRQ	16	static
+C:\Users\ferok\Documents\MCUXpressoIDE_25.6.136\workspace_FRDMMCXN947\Lab0_DSP_FRDMMCXN947\drivers/fsl_common_arm.h:672:24:EnableIRQ	24	static
+C:\Users\ferok\Documents\MCUXpressoIDE_25.6.136\workspace_FRDMMCXN947\Lab0_DSP_FRDMMCXN947\drivers/fsl_ctimer.h:517:20:CTIMER_StartTimer	16	static
+C:\Users\ferok\Documents\MCUXpressoIDE_25.6.136\workspace_FRDMMCXN947\Lab0_DSP_FRDMMCXN947\drivers/fsl_spc.h:1093:20:SPC_EnableActiveModeAnalogModules	16	static
+C:\Users\ferok\Documents\MCUXpressoIDE_25.6.136\workspace_FRDMMCXN947\Lab0_DSP_FRDMMCXN947\drivers/fsl_dac.h:284:20:DAC_Enable	16	static
+C:\Users\ferok\Documents\MCUXpressoIDE_25.6.136\workspace_FRDMMCXN947\Lab0_DSP_FRDMMCXN947\drivers/fsl_lpadc.h:938:20:LPADC_EnableInterrupts	16	static
+../board/peripherals.c:138:13:CTIMER0_init	8	static
+../board/peripherals.c:186:13:GPIO0_init	8	static
+../board/peripherals.c:247:13:DAC0_init	8	static
+../board/peripherals.c:370:13:ADC0_init	8	static
+../board/peripherals.c:418:13:VREF0_init	8	static
+../board/peripherals.c:428:6:BOARD_InitPeripherals	8	static
+../board/peripherals.c:441:6:BOARD_InitBootPeripherals	8	static
