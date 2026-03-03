@@ -25,10 +25,10 @@
  *   Use the Filter Design & Analysis Tool to design accurate
  *   int16 filter coefficients.
  */
-const int numTaps = 31;
-const int16_T firCoeffsQ15[31] = {
+const int numTaps = 32;
+const int16_t firCoeffsQ15[32] = {
       125,   -954,   -685,     86,    718,    272,   -792,   -874,    524,
      1590,    313,  -2274,  -2257,   2766,   9995,  13439,   9995,   2766,
     -2257,  -2274,    313,   1590,    524,   -874,   -792,    272,    718,
-       86,   -685,   -954,    125
+       86,   -685,   -954,    125,      0
 };
