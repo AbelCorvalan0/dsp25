@@ -221,7 +221,7 @@ typedef enum {
 
 static q15_t buffer_in [BUFFER_SIZE];
 static q15_t buffer_out[BUFFER_SIZE];
-q15_t *p_buffer_out;
+       q15_t *p_buffer_out;
 
 static q15_t pStatePB_8k[numTaps + BLOCK_SIZE]; // State
 
@@ -294,7 +294,6 @@ int main(void)
 }
 
 void init_filtros(void){
-
 	/* EJ: inicialización filtro Pasa BAJOS, para frec. 8k */
 	//q15_t pStatePB_8k[BLOCK_SIZE + numTaps]; //segun filtro
 
@@ -304,13 +303,7 @@ void init_filtros(void){
 
 	Status= arm_fir_init_q15(&filter_array, numTaps, filter8, pStatePB_8k, BLOCK_SIZE);
 
-
 // arreglo_filtros[K8][PB] se puede armar una instancia donde cada índice es un tipo de filtro a considerar.
-
-
-//Asi con todos!!
-
-
 }
 
 q15_t conv16_2_q15    (uint16_t sam){
@@ -455,6 +448,39 @@ void configGpioPin(void){
 
                       /* Input Buffer Enable: Enables. */
                       | PORT_PCR_IBE(0x01u));
+
+    ////////////////////////////////////
+    /* PORT0_22 is configured as GPIO */
+    gpio_pin_config_t gpio0_pinB8_config = {
+        .pinDirection = kGPIO_DigitalInput,
+        .outputLogic = 0U
+    };
+    /* Initialize GPIO functionality on pin PIO0_22 (pin B8)  */
+    GPIO_PinInit(GPIO0, 22U, &gpio0_pinB8_config);
+
+    /* Interrupt configuration on GPIO0_23 (pin B7): Interrupt on falling edge */
+    GPIO_SetPinInterruptConfig(GPIO0, 22U, kGPIO_InterruptFallingEdge);
+
+    /* PORT0_23 (pin B7) is configured as PIO0_23 */
+    PORT_SetPinMux(PORT0, 22U, kPORT_MuxAlt0);
+
+
+    GPIO0->ICR[22] = ((GPIO0->ICR[22] &
+                       /* Mask bits to zero which are setting */
+                       (~(GPIO_ICR_IRQS_MASK | GPIO_ICR_ISF_MASK)))
+
+                      /* Interrupt Select: Interrupt, trigger output, or DMA request 0. */
+                      | (GPIO_ICR_IRQS(0x20U) & 0x100000U));
+
+    /* PORT0_22 (pin B8) is configured as PIO0_22 */
+    PORT_SetPinMux(PORT0, 22U, kPORT_MuxAlt0);
+
+    PORT0->PCR[22] = ((PORT0->PCR[22] &
+                       /* Mask bits to zero which are setting */
+                       (~(PORT_PCR_IBE_MASK)))
+
+                      /* Input Buffer Enable: Enables. */
+                      | (PORT_PCR_IBE(0x01u) & 0x1000U));
 
 }
 
@@ -621,6 +647,7 @@ void GPIO00_IRQHandler(){
 
 	SW2 = GPIO_PinGetInterruptFlag(GPIO0, 23); //FLAG DE INTERRUPCION SI PRESIONE PULSADOR SW2 FLANCO DE BAJADA
 	SW3 = GPIO_PinGetInterruptFlag(GPIO0, 6); //FLAG DE INTERRUPCION SI PRESIONE PULSADOR SW3 FLANCO DE SUBIDA
+	SW1 = GPIO_PinGetInterruptFlag(GPIO0, 22);
 
 	if(SW2 && !runAcq){
 		matchNewValue= s_ticksFs[g_fs];
@@ -649,9 +676,14 @@ void GPIO00_IRQHandler(){
 		runAcq= !runAcq;
 	}
 
+	if(SW1){
+		PRINTF("HOLA %s\r\n");
+		// Inicializar otro filtro.
+	}
+
 	GPIO_PinClearInterruptFlag(GPIO0, 23); //LIMPIO FLAG DE SW2 (GPIO0 PIN 23)
-	// Added
 	GPIO_PinClearInterruptFlag(GPIO0, 6); //LIMPIO FLAG DE SW3 (GPIO0 PIN 6)
+	GPIO_PinClearInterruptFlag(GPIO0, 22);
 }
 
 void CTIMER0_IRQHandler(){
