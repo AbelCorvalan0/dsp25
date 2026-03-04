@@ -378,159 +378,6 @@ uint16_t q15_to_uint16(q15_t q_val){
     return u_val;
 }
 
-void configGpioPin(void){
-
-	// GPIO
-    gpio_pin_config_t SW3_config = {
-        .pinDirection = kGPIO_DigitalInput,
-        .outputLogic = 0U
-    };
-    /* Initialize GPIO functionality on pin PIO0_6 (pin C14)  */
-    GPIO_PinInit(GPIO0, 6U, &SW3_config);
-    ///
-
-    // RED LED.
-    gpio_pin_config_t LED_RED_config = {
-        .pinDirection = kGPIO_DigitalOutput,
-        .outputLogic = 0U
-    };
-    /* Initialize GPIO functionality on pin PIO0_10 (pin B12)  */
-    GPIO_PinInit(GPIO0, 10U, &LED_RED_config);
-
-    // GREEN LED
-    gpio_pin_config_t LED_GREEN_config = {
-        .pinDirection = kGPIO_DigitalOutput,
-        .outputLogic = 0U
-    };
-    /* Initialize GPIO functionality on pin PIO0_27 (pin E10)  */
-    GPIO_PinInit(GPIO0, 27U, &LED_GREEN_config);
-
-    // BLUE LED
-    gpio_pin_config_t LED_BLUE_config = {
-        .pinDirection = kGPIO_DigitalOutput,
-        .outputLogic = 0U
-    };
-    /* Initialize GPIO functionality on pin PIO1_2 (pin C4)  */
-    GPIO_PinInit(GPIO1, 2U, &LED_BLUE_config);
-
-    ////////////////////////////
-    // Interruptions added.
-    /* Interrupt configuration on GPIO0_6 (pin C14): Interrupt on rising edge */
-    GPIO_SetPinInterruptConfig(GPIO0, 6U, kGPIO_InterruptRisingEdge);
-
-    ////////////////////////////
-    // RED LED
-    /* PORT0_10 (pin B12) is configured as PIO0_10 */
-    PORT_SetPinMux(PORT0, 10U, kPORT_MuxAlt0);
-
-    PORT0->PCR[10] = ((PORT0->PCR[10] &
-                       /* Mask bits to zero which are setting */
-                       (~(PORT_PCR_IBE_MASK)))
-
-                      /* Input Buffer Enable: Enables. */
-                      | PORT_PCR_IBE(0x01u));
-    ///////////////////////////
-    // GREEN LED Pin Mux
-    /* PORT0_27 (pin E10) is configured as PIO0_27 */
-    PORT_SetPinMux(PORT0, 27U, kPORT_MuxAlt0);
-
-    PORT0->PCR[27] = ((PORT0->PCR[27] &
-                       /* Mask bits to zero which are setting */
-                       (~(PORT_PCR_IBE_MASK)))
-
-                       /* Input Buffer Enable: Enables. */
-                       | PORT_PCR_IBE(0x01u));
-
-
-    ///////////////////////////
-    // SW3 Pin Mux
-    /* PORT0_6 (pin C14) is configured as PIO0_6 */
-    PORT_SetPinMux(PORT0, 6U, kPORT_MuxAlt0);
-
-    PORT0->PCR[6] = ((PORT0->PCR[6] &
-                      /* Mask bits to zero which are setting */
-                      (~(PORT_PCR_IBE_MASK)))
-
-                     /* Input Buffer Enable: Enables. */
-                     | PORT_PCR_IBE(0x01u));
-    ///////////////////////////
-    // BLUE LED Pin Mux.
-    /* PORT1_2 (pin C4) is configured as PIO1_2 */
-    PORT_SetPinMux(PORT1, 2U, kPORT_MuxAlt0);
-
-    PORT1->PCR[2] = ((PORT1->PCR[2] &
-                      /* Mask bits to zero which are setting */
-                      (~(PORT_PCR_IBE_MASK)))
-
-                     /* Input Buffer Enable: Enables. */
-                     | PORT_PCR_IBE(0x01u));
-    ///////////////////////////
-    // GPIO0
-    EnableIRQ(GPIO00_IRQn);
-    ///////////////////////////
-
-	/* P0.23 (SW2) pin configuration */
-    gpio_pin_config_t SW2_config = {
-        .pinDirection = kGPIO_DigitalInput,
-        .outputLogic = 0U
-    };
-    /* Initialize GPIO functionality on pin PIO0_23 (pin B7)  */
-    GPIO_PinInit(GPIO0, 23U, &SW2_config);
-
-    /* Interrupt configuration on GPIO0_23 (pin B7): Interrupt on falling edge */
-    GPIO_SetPinInterruptConfig(GPIO0, 23U, kGPIO_InterruptFallingEdge);
-
-    /* PORT0_23 (pin B7) is configured as PIO0_23 */
-    PORT_SetPinMux(PORT0, 23U, kPORT_MuxAlt0);
-
-    PORT0->PCR[23] = ((PORT0->PCR[23] &
-                      /* Mask bits to zero which are setting */
-                      (~(PORT_PCR_PS_MASK | PORT_PCR_PE_MASK | PORT_PCR_IBE_MASK)))
-
-                      /* Pull Select: Enables internal pullup resistor. */
-                      | PORT_PCR_PS(0x01u)
-
-                      /* Pull Enable: Enables. */
-                      | PORT_PCR_PE(0x01u)
-
-                      /* Input Buffer Enable: Enables. */
-                      | PORT_PCR_IBE(0x01u));
-
-    ////////////////////////////////////
-    /* PORT0_22 is configured as GPIO */
-    gpio_pin_config_t gpio0_pinB8_config = {
-        .pinDirection = kGPIO_DigitalInput,
-        .outputLogic = 0U
-    };
-    /* Initialize GPIO functionality on pin PIO0_22 (pin B8)  */
-    GPIO_PinInit(GPIO0, 22U, &gpio0_pinB8_config);
-
-    /* Interrupt configuration on GPIO0_23 (pin B7): Interrupt on falling edge */
-    GPIO_SetPinInterruptConfig(GPIO0, 22U, kGPIO_InterruptFallingEdge);
-
-    /* PORT0_23 (pin B7) is configured as PIO0_23 */
-    PORT_SetPinMux(PORT0, 22U, kPORT_MuxAlt0);
-
-
-    GPIO0->ICR[22] = ((GPIO0->ICR[22] &
-                       /* Mask bits to zero which are setting */
-                       (~(GPIO_ICR_IRQS_MASK | GPIO_ICR_ISF_MASK)))
-
-                      /* Interrupt Select: Interrupt, trigger output, or DMA request 0. */
-                      | (GPIO_ICR_IRQS(0x20U) & 0x100000U));
-
-    /* PORT0_22 (pin B8) is configured as PIO0_22 */
-    PORT_SetPinMux(PORT0, 22U, kPORT_MuxAlt0);
-
-    PORT0->PCR[22] = ((PORT0->PCR[22] &
-                       /* Mask bits to zero which are setting */
-                       (~(PORT_PCR_IBE_MASK)))
-
-                      /* Input Buffer Enable: Enables. */
-                      | (PORT_PCR_IBE(0x01u) & 0x1000U));
-
-}
-
 void configAdcInt(){
 
 	INPUTMUX_Init(INPUTMUX); //PARA INCIAR LA CONEXION DE PERIFERICOS O PINES
@@ -698,17 +545,24 @@ void GPIO00_IRQHandler(){
 
 	if(SW2 && !runAcq){
 		matchNewValue= s_ticksFs[g_fs];
-		PRINTF("Sample frequency: %u\r\n", s_ticksFs[g_fs]);
+		//PRINTF("Sample frequency: %u\r\n", s_ticksFs[g_fs]);
 		setNewMatch(matchNewValue);
+		PRINTF("Cambio de Frecuencia de muestreo ----- FS: %s | FILTER: %s\r\n\n",
+			           fs_names[g_fs],
+			           filter_names[g_filter]);
 		led_ShowFs(g_fs);
 		g_fs= (g_fs+1)%fsCount;
-		PRINTF("Sample frequency: %u\r\n", matchNewValue);
+		//PRINTF("Sample frequency: %u\r\n", matchNewValue);
 	}
 
 	// SW3 if added
 	if(SW3){
 
 		PRINTF("Muestreo %s\r\n", runAcq ? "ON" : "OFF");
+
+	    PRINTF("FS: %s | FILTER: %s\r\n\n\n",
+	           fs_names[g_fs],
+	           filter_names[g_filter]);
 		if(runAcq){
 			EnableIRQ(ADC0_IRQn);
 			LPADC_EnableInterrupts(ADC0, kLPADC_Trigger5CompletionInterruptEnable);
@@ -724,7 +578,7 @@ void GPIO00_IRQHandler(){
 	}
 
 	if(SW1){
-		PRINTF("HOLA %s\r\n");
+		PRINTF("Cambio de Filtro ------");
 		// Inicializar otro filtro.
 		showArray();
 	}
@@ -773,11 +627,16 @@ void processData(){
 }
 
 void showArray(void){
-	PRINTF("HOLA %u\r %u\n", g_fs, g_filter);
+
+//    PRINTF("HOLA %s | %s\r\n",
+//           fs_names[g_fs],
+//           filter_names[g_filter]);
 
     g_filter = (g_filter + 1) % filterCount;
 
-    PRINTF("FS: %u | FILTER: %u\r\n", g_fs, g_filter);
+    PRINTF("FS: %s | FILTER: %s\r\n\n",
+           fs_names[g_fs],
+           filter_names[g_filter]);
 
     // Cambiar puntero al nuevo filtro activo
     pte_aux = &filter_array[g_fs][g_filter];
@@ -785,8 +644,23 @@ void showArray(void){
     // Resetear estado del filtro nuevo
     memset(state[g_fs][g_filter], 0,
            (coef_taps[g_fs][g_filter] + BLOCK_SIZE - 1) * sizeof(q15_t));
-
 }
+
+//void showArray(void){
+//	PRINTF("HOLA %u\r %u\n", g_fs, g_filter);
+//
+//    g_filter = (g_filter + 1) % filterCount;
+//
+//    PRINTF("FS: %u | FILTER: %u\r\n", g_fs, g_filter);
+//
+//    // Cambiar puntero al nuevo filtro activo
+//    pte_aux = &filter_array[g_fs][g_filter];
+//
+//    // Resetear estado del filtro nuevo
+//    memset(state[g_fs][g_filter], 0,
+//           (coef_taps[g_fs][g_filter] + BLOCK_SIZE - 1) * sizeof(q15_t));
+//
+//}
 
 
 void led_ShowFs(fs_t selectFS)	//Modify the color of LED indicator with selectFS.
@@ -828,6 +702,159 @@ void showSamplesInDAC(){
 	DAC_SetData(DAC0, dacValue);
 	indexWaveForm2 = (indexWaveForm2+1)% BUFFER_SIZE;
 }*/
+
+void configGpioPin(void){
+
+	// GPIO
+    gpio_pin_config_t SW3_config = {
+        .pinDirection = kGPIO_DigitalInput,
+        .outputLogic = 0U
+    };
+    /* Initialize GPIO functionality on pin PIO0_6 (pin C14)  */
+    GPIO_PinInit(GPIO0, 6U, &SW3_config);
+    ///
+
+    // RED LED.
+    gpio_pin_config_t LED_RED_config = {
+        .pinDirection = kGPIO_DigitalOutput,
+        .outputLogic = 0U
+    };
+    /* Initialize GPIO functionality on pin PIO0_10 (pin B12)  */
+    GPIO_PinInit(GPIO0, 10U, &LED_RED_config);
+
+    // GREEN LED
+    gpio_pin_config_t LED_GREEN_config = {
+        .pinDirection = kGPIO_DigitalOutput,
+        .outputLogic = 0U
+    };
+    /* Initialize GPIO functionality on pin PIO0_27 (pin E10)  */
+    GPIO_PinInit(GPIO0, 27U, &LED_GREEN_config);
+
+    // BLUE LED
+    gpio_pin_config_t LED_BLUE_config = {
+        .pinDirection = kGPIO_DigitalOutput,
+        .outputLogic = 0U
+    };
+    /* Initialize GPIO functionality on pin PIO1_2 (pin C4)  */
+    GPIO_PinInit(GPIO1, 2U, &LED_BLUE_config);
+
+    ////////////////////////////
+    // Interruptions added.
+    /* Interrupt configuration on GPIO0_6 (pin C14): Interrupt on rising edge */
+    GPIO_SetPinInterruptConfig(GPIO0, 6U, kGPIO_InterruptRisingEdge);
+
+    ////////////////////////////
+    // RED LED
+    /* PORT0_10 (pin B12) is configured as PIO0_10 */
+    PORT_SetPinMux(PORT0, 10U, kPORT_MuxAlt0);
+
+    PORT0->PCR[10] = ((PORT0->PCR[10] &
+                       /* Mask bits to zero which are setting */
+                       (~(PORT_PCR_IBE_MASK)))
+
+                      /* Input Buffer Enable: Enables. */
+                      | PORT_PCR_IBE(0x01u));
+    ///////////////////////////
+    // GREEN LED Pin Mux
+    /* PORT0_27 (pin E10) is configured as PIO0_27 */
+    PORT_SetPinMux(PORT0, 27U, kPORT_MuxAlt0);
+
+    PORT0->PCR[27] = ((PORT0->PCR[27] &
+                       /* Mask bits to zero which are setting */
+                       (~(PORT_PCR_IBE_MASK)))
+
+                       /* Input Buffer Enable: Enables. */
+                       | PORT_PCR_IBE(0x01u));
+
+
+    ///////////////////////////
+    // SW3 Pin Mux
+    /* PORT0_6 (pin C14) is configured as PIO0_6 */
+    PORT_SetPinMux(PORT0, 6U, kPORT_MuxAlt0);
+
+    PORT0->PCR[6] = ((PORT0->PCR[6] &
+                      /* Mask bits to zero which are setting */
+                      (~(PORT_PCR_IBE_MASK)))
+
+                     /* Input Buffer Enable: Enables. */
+                     | PORT_PCR_IBE(0x01u));
+    ///////////////////////////
+    // BLUE LED Pin Mux.
+    /* PORT1_2 (pin C4) is configured as PIO1_2 */
+    PORT_SetPinMux(PORT1, 2U, kPORT_MuxAlt0);
+
+    PORT1->PCR[2] = ((PORT1->PCR[2] &
+                      /* Mask bits to zero which are setting */
+                      (~(PORT_PCR_IBE_MASK)))
+
+                     /* Input Buffer Enable: Enables. */
+                     | PORT_PCR_IBE(0x01u));
+    ///////////////////////////
+    // GPIO0
+    EnableIRQ(GPIO00_IRQn);
+    ///////////////////////////
+
+	/* P0.23 (SW2) pin configuration */
+    gpio_pin_config_t SW2_config = {
+        .pinDirection = kGPIO_DigitalInput,
+        .outputLogic = 0U
+    };
+    /* Initialize GPIO functionality on pin PIO0_23 (pin B7)  */
+    GPIO_PinInit(GPIO0, 23U, &SW2_config);
+
+    /* Interrupt configuration on GPIO0_23 (pin B7): Interrupt on falling edge */
+    GPIO_SetPinInterruptConfig(GPIO0, 23U, kGPIO_InterruptFallingEdge);
+
+    /* PORT0_23 (pin B7) is configured as PIO0_23 */
+    PORT_SetPinMux(PORT0, 23U, kPORT_MuxAlt0);
+
+    PORT0->PCR[23] = ((PORT0->PCR[23] &
+                      /* Mask bits to zero which are setting */
+                      (~(PORT_PCR_PS_MASK | PORT_PCR_PE_MASK | PORT_PCR_IBE_MASK)))
+
+                      /* Pull Select: Enables internal pullup resistor. */
+                      | PORT_PCR_PS(0x01u)
+
+                      /* Pull Enable: Enables. */
+                      | PORT_PCR_PE(0x01u)
+
+                      /* Input Buffer Enable: Enables. */
+                      | PORT_PCR_IBE(0x01u));
+
+    ////////////////////////////////////
+    /* PORT0_22 is configured as GPIO */
+    gpio_pin_config_t gpio0_pinB8_config = {
+        .pinDirection = kGPIO_DigitalInput,
+        .outputLogic = 0U
+    };
+    /* Initialize GPIO functionality on pin PIO0_22 (pin B8)  */
+    GPIO_PinInit(GPIO0, 22U, &gpio0_pinB8_config);
+
+    /* Interrupt configuration on GPIO0_23 (pin B7): Interrupt on falling edge */
+    GPIO_SetPinInterruptConfig(GPIO0, 22U, kGPIO_InterruptFallingEdge);
+
+    /* PORT0_23 (pin B7) is configured as PIO0_23 */
+    PORT_SetPinMux(PORT0, 22U, kPORT_MuxAlt0);
+
+
+    GPIO0->ICR[22] = ((GPIO0->ICR[22] &
+                       /* Mask bits to zero which are setting */
+                       (~(GPIO_ICR_IRQS_MASK | GPIO_ICR_ISF_MASK)))
+
+                      /* Interrupt Select: Interrupt, trigger output, or DMA request 0. */
+                      | (GPIO_ICR_IRQS(0x20U) & 0x100000U));
+
+    /* PORT0_22 (pin B8) is configured as PIO0_22 */
+    PORT_SetPinMux(PORT0, 22U, kPORT_MuxAlt0);
+
+    PORT0->PCR[22] = ((PORT0->PCR[22] &
+                       /* Mask bits to zero which are setting */
+                       (~(PORT_PCR_IBE_MASK)))
+
+                      /* Input Buffer Enable: Enables. */
+                      | (PORT_PCR_IBE(0x01u) & 0x1000U));
+
+}
 
 void firstConfig(){
 
