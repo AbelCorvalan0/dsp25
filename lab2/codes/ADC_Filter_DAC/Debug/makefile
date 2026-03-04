@@ -12,6 +12,7 @@ RM := rm -rf
 -include utilities/debug_console_lite/subdir.mk
 -include utilities/subdir.mk
 -include startup/subdir.mk
+-include source/coeffs/subdir.mk
 -include source/subdir.mk
 -include drivers/subdir.mk
 -include device/subdir.mk

@@ -137,7 +137,8 @@ source/lpadc_interrupt.o source/lpadc_interrupt.d: \
  /home/abel/Documents/MCUXpresso_25.6.136/workspaceMCX/ADC_Filter_DAC/drivers/dsp/filtering_functions.h \
  /home/abel/Documents/MCUXpresso_25.6.136/workspaceMCX/ADC_Filter_DAC/drivers/dsp/support_functions.h \
  /home/abel/Documents/MCUXpresso_25.6.136/workspaceMCX/ADC_Filter_DAC/drivers/dsp/quaternion_math_functions.h \
- /home/abel/Documents/MCUXpresso_25.6.136/workspaceMCX/ADC_Filter_DAC/drivers/dsp/window_functions.h
+ /home/abel/Documents/MCUXpresso_25.6.136/workspaceMCX/ADC_Filter_DAC/drivers/dsp/window_functions.h \
+ ../source/coeffs/filter_coeffs.h
 /home/abel/Documents/MCUXpresso_25.6.136/workspaceMCX/ADC_Filter_DAC/source/mcux_config.h:
 /home/abel/Documents/MCUXpresso_25.6.136/workspaceMCX/ADC_Filter_DAC/utilities/debug_console_lite/fsl_debug_console.h:
 /home/abel/Documents/MCUXpresso_25.6.136/workspaceMCX/ADC_Filter_DAC/drivers/fsl_common.h:
@@ -276,3 +277,4 @@ source/lpadc_interrupt.o source/lpadc_interrupt.d: \
 /home/abel/Documents/MCUXpresso_25.6.136/workspaceMCX/ADC_Filter_DAC/drivers/dsp/support_functions.h:
 /home/abel/Documents/MCUXpresso_25.6.136/workspaceMCX/ADC_Filter_DAC/drivers/dsp/quaternion_math_functions.h:
 /home/abel/Documents/MCUXpresso_25.6.136/workspaceMCX/ADC_Filter_DAC/drivers/dsp/window_functions.h:
+../source/coeffs/filter_coeffs.h:

@@ -6,7 +6,7 @@
  * Generated linker script file for MCXN947
  * Created from linkscript.ldt by FMCreateLinkLibraries
  * Using Freemarker v2.3.30
- * MCUXpresso IDE v25.6 [Build 136] [2025-06-27] on Mar 3, 2026, 1:20:06 AM
+ * MCUXpresso IDE v25.6 [Build 136] [2025-06-27] on Mar 3, 2026, 9:47:32 PM
  */
 
 INCLUDE "ADC_Filter_DAC_Debug_library.ld"

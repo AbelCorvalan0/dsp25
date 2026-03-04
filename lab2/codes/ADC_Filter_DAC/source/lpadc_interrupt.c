@@ -22,6 +22,8 @@
 
 #include "arm_math.h"
 
+#include "coeffs/filter_coeffs.h"
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -48,7 +50,7 @@ const uint32_t g_LpadcResultShift = 3U;
 //typedef uint16_t q15_t;
 
 /* Sample frecuencies */
-typedef enum{ f8k, f16k, f22k, f44k, f48k, fsCount } fs_t;
+//typedef enum{ f8k, f16k, f22k, f44k, f48k, fsCount } fs_t;
 // Sequence red, green, blue, yellow, mag.
 
 /* Ticks for Match */
@@ -215,23 +217,48 @@ const   int16_t filter8[numTaps] = {
        86,   -685,   -954,    125,      0
 };
 
-typedef enum {
-	LP, HP, PB, BS
-}type_filter_t;
+//typedef enum {
+//	LP, HP, PB, BS
+//}type_filter_t;
+
+const char *filter_names[filterCount] = {
+    "LP",
+    "HP",
+    "BS",
+    "BP"
+};
+
+const char *fs_names[fsCount] = {
+    "8kHz",
+    "16kHz",
+	"22kHz",
+	"44kHz",
+	"48kHz"
+
+};
+
+
 
 static q15_t buffer_in [BUFFER_SIZE];
 static q15_t buffer_out[BUFFER_SIZE];
        q15_t *p_buffer_out;
 
-static q15_t pStatePB_8k[numTaps + BLOCK_SIZE]; // State
+//static q15_t pStatePB_8k[numTaps + BLOCK_SIZE]; // State
+static filter_t g_filter = LP;
 
 //arm_fir_instance_q15 arreglo_filtros[5][4]; //Podríamos hacer esto para todos los FIR
-arm_fir_instance_q15 filter_array; //Podríamos hacer esto para todos los FIR
+arm_fir_instance_q15 filter_array[fsCount][filterCount]; //Podríamos hacer esto para todos los FIR
 arm_fir_instance_q15 * pte_aux;
 
 arm_status Status;  //Se usa dependiendo del CMSIS inicilaizar el FIR
 
 uint32_t blockSize = BLOCK_SIZE;
+
+#define MAX_TAPS  4490   // o el máximo real de tus filtros
+
+static q15_t state[fsCount][filterCount][MAX_TAPS + BLOCK_SIZE - 1];
+
+void showArray(void);
 
 //RGB - COLORs:
 static inline void LED_R(bool on) {
@@ -285,7 +312,7 @@ int main(void)
 
     init_filtros();
     p_buffer_out= buffer1;
-    pte_aux = &filter_array;
+    pte_aux = &filter_array[f8k][LP];
 
     EnableIRQ(GPIO00_IRQn);
 
@@ -297,12 +324,32 @@ void init_filtros(void){
 	/* EJ: inicialización filtro Pasa BAJOS, para frec. 8k */
 	//q15_t pStatePB_8k[BLOCK_SIZE + numTaps]; //segun filtro
 
-	arm_fir_init_q15(&filter_array, numTaps, filter8, pStatePB_8k, BLOCK_SIZE);
+	//arm_fir_init_q15(&filter_array, numTaps, filter8, pStatePB_8k, BLOCK_SIZE);
+
+	    for(int fs = 0; fs < fsCount; fs++)
+	    {
+	        for(int f = 0; f < filterCount; f++)
+	        {
+	            arm_fir_init_q15(
+	                &filter_array[fs][f],
+	                coef_taps[fs][f],
+	                (q15_t*)coef[fs][f],
+	                state[fs][f],
+	                BLOCK_SIZE
+	            );
+	        }
+	    }
 
 	//en algunos CMSIS se tiene que inicializar de la siguiente manera:
 
-	Status= arm_fir_init_q15(&filter_array, numTaps, filter8, pStatePB_8k, BLOCK_SIZE);
-
+	//Status= arm_fir_init_q15(&filter_array, numTaps, filter8, pStatePB_8k, BLOCK_SIZE);
+	Status = arm_fir_init_q15(
+	            &filter_array[f8k][LP],
+	            coef_taps[f8k][LP],
+	            (q15_t*)coef[f8k][LP],
+	            state[f8k][LP],     // ← SIN []
+	            BLOCK_SIZE
+	         );
 // arreglo_filtros[K8][PB] se puede armar una instancia donde cada índice es un tipo de filtro a considerar.
 }
 
@@ -679,6 +726,7 @@ void GPIO00_IRQHandler(){
 	if(SW1){
 		PRINTF("HOLA %s\r\n");
 		// Inicializar otro filtro.
+		showArray();
 	}
 
 	GPIO_PinClearInterruptFlag(GPIO0, 23); //LIMPIO FLAG DE SW2 (GPIO0 PIN 23)
@@ -699,7 +747,7 @@ void CTIMER0_IRQHandler(){
 	CTIMER_ClearStatusFlags(CTIMER0, kCTIMER_Match3Flag);  //LIMPIO FLAG DE TIMER 0.
 }
 
-void processData(){
+/*void processData(){
 
 	static int index_buffer= 0;
 	arm_fir_q15 (pte_aux, &buffer1[index_buffer], &buffer_out[index_buffer], blockSize);
@@ -708,7 +756,38 @@ void processData(){
 	//dac_value = (prueba >>3) & 0x0FFF;
 	//dac_value_fix = dac_value;
 	index_buffer = (index_buffer+1)% BUFFER_SIZE;
+}*/
+
+void processData(){
+
+    static int index_buffer= 0;
+
+    arm_fir_q15(
+        pte_aux,
+        &buffer1[index_buffer],
+        &buffer_out[index_buffer],
+        blockSize
+    );
+
+    index_buffer = (index_buffer+1)% BUFFER_SIZE;
 }
+
+void showArray(void){
+	PRINTF("HOLA %u\r %u\n", g_fs, g_filter);
+
+    g_filter = (g_filter + 1) % filterCount;
+
+    PRINTF("FS: %u | FILTER: %u\r\n", g_fs, g_filter);
+
+    // Cambiar puntero al nuevo filtro activo
+    pte_aux = &filter_array[g_fs][g_filter];
+
+    // Resetear estado del filtro nuevo
+    memset(state[g_fs][g_filter], 0,
+           (coef_taps[g_fs][g_filter] + BLOCK_SIZE - 1) * sizeof(q15_t));
+
+}
+
 
 void led_ShowFs(fs_t selectFS)	//Modify the color of LED indicator with selectFS.
 {
@@ -849,4 +928,3 @@ void firstConfig(){
 #endif
 
 }
-

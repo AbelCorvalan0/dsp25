@@ -34,6 +34,7 @@ board \
 component/uart \
 device \
 drivers \
+source/coeffs \
 source \
 startup \
 utilities/debug_console_lite \
