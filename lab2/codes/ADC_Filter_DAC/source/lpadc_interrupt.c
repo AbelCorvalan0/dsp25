@@ -557,7 +557,6 @@ void GPIO00_IRQHandler(){
 
 	// SW3 if added
 	if(SW3){
-
 		PRINTF("Muestreo %s\r\n", runAcq ? "ON" : "OFF");
 
 	    PRINTF("FS: %s | FILTER: %s\r\n\n\n",
@@ -572,6 +571,7 @@ void GPIO00_IRQHandler(){
 			EnableIRQ(CTIMER0_IRQn);
 		} else {
 			DisableIRQ(ADC0_IRQn);
+			CTIMER_EnableInterrupts(CTIMER0, kCTIMER_Match3InterruptEnable);
 			LED_SetRGB(false, false, false);
 		}
 		runAcq= !runAcq;
