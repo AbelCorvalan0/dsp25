@@ -1,4 +1,4 @@
-# Lab 1 - Sampling
+# Lab 2 - FIR Filters
 
 ### Objective
 

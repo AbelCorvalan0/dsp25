@@ -25,7 +25,7 @@
  *   Use the Filter Design & Analysis Tool to design accurate
  *   int16 filter coefficients.
  */
-const int B = 334;
+const int numTaps = 334;
 const int16_T pb16k[334] = {
       125,    322,    468,    398,    126,   -130,   -153,     23,    159,
        99,    -53,    -84,     34,    124,     60,    -58,    -55,     60,

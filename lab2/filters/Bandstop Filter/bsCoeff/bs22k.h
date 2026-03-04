@@ -25,8 +25,8 @@
  *   Use the Filter Design & Analysis Tool to design accurate
  *   int16 filter coefficients.
  */
-const int B = 2059;
-const int16_T bs22k[2060] = {
+const int numTaps = 2060;
+const int16_t bs22k[2060] = {
     -1304,     10,      9,      9,      9,      9,      9,      9,      9,
         9,      9,      9,      9,      9,      9,      9,      9,      9,
         9,      9,      9,      9,      9,      9,      9,      9,      9,

@@ -14,7 +14,7 @@
  */
 
 /* General type conversion for MATLAB generated C-code  */
-#include "tmwtypes.h"
+//#include "tmwtypes.h"
 /* 
  * Expected path to tmwtypes.h 
  * /usr/local/MATLAB/R2025b/extern/include/tmwtypes.h 
@@ -25,8 +25,8 @@
  *   Use the Filter Design & Analysis Tool to design accurate
  *   int16 filter coefficients.
  */
-const int B = 749;
-const int16_T bs8k[749] = {
+const int numTaps = 750;
+const int16_t bs8k[750] = {
     -1299,     26,     25,     25,     25,     25,     24,     24,     24,
        24,     24,     23,     23,     23,     23,     23,     23,     22,
        22,     22,     22,     22,     22,     21,     21,     21,     21,
@@ -110,5 +110,5 @@ const int16_T bs8k[749] = {
        20,     21,     21,     21,     21,     21,     22,     22,     22,
        22,     22,     22,     23,     23,     23,     23,     23,     23,
        24,     24,     24,     24,     24,     25,     25,     25,     25,
-       26,  -1299
+       26,  -1299,      0
 };
